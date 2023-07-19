@@ -3,4 +3,4 @@ project(test_random_device)
 
 set(CMAKE_CXX_STANDARD 23)
 
-add_executable(test_random_device main.cpp random_device.cpp random_device.hpp)
+add_executable(test_random_device main.cpp random_device.cpp random_device.hpp chi_squared_test.cpp chi_squared_test.hpp)

@@ -6,6 +6,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <vector>
+#include "chi_squared_test.hpp"
 #include "random_device.hpp"
 
 
@@ -29,27 +30,30 @@ int main(int, char *argv[]) {
         // std::random_device expected to produce uniformly distributed numbers in the closed interval [min(), max()].
         constexpr unsigned int NumberBins = 1'000Ul;
         std::vector<double> bins(NumberBins);
-        bins.reserve(NumberBins);
+        std::vector<double> expected(NumberBins);
+        ChiSquaredTest chiSquaredTest;
 
-        for (auto k = 0; k < NumberBins; ++k) bins[k] = 0.0;
+        bins.reserve(NumberBins);
+        expected.reserve(NumberBins);
+
+        for (auto k = 0; k < NumberBins; ++k) {
+            bins[k] = 0.0;
+            expected[k] =  static_cast<double>(NumberTrials)/static_cast<double>(NumberBins);
+
+        }
 
         auto range = RandomDevice::max() - RandomDevice::min();
         auto binWidth = range/NumberBins;
-        auto expectedCount = static_cast<double>(NumberTrials)/static_cast<double>(NumberBins);
 
         std::cout << "Number of bins in histogram: " << NumberBins << std::endl;
-        std::cout << "Expected count in each bin: " << expectedCount << std::endl;
+        std::cout << "Expected count in each bin: " << expected[0] << std::endl;
 
         for (auto const sample : samples) {
             auto binNumber = (sample - RandomDevice::min())/binWidth;
             ++bins[binNumber];
         }
 
-        auto chiSquared = 0.0;
-        for (auto const bin : bins) {
-            auto term = (bin - expectedCount)/expectedCount;
-            chiSquared += term*term;
-        }
+        auto chiSquared = chiSquaredTest(&bins[0], &expected[0], NumberBins);
 
         std::cout << "Chi-squared statistic: " << chiSquared << std::endl;
 

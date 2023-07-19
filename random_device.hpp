@@ -24,8 +24,7 @@ public:
 
     static constexpr unsigned int min() { return std::random_device::min(); }
 
-    static constexpr unsigned int max() { return std::random_device::max(); }
-
+    static constexpr unsigned int max() { return std::random_device::max(); };
 };
 
 
